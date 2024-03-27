@@ -1,20 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import GamePage from './game_page'; // Make sure the import path matches the location of your game_page.js file
+import { styles } from './Styles/styles_page'; // Adjust the import path as necessary
 
-export default function App() {
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('Home');
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      {currentPage === 'Home' ? (
+        <View style={styles.homeContainer}>
+          <Text style={styles.homeTitle}>Welcome to the Memory Game</Text>
+          <Pressable
+            style={styles.playButton}
+            onPress={() => setCurrentPage('GamePage')}
+          >
+            <Text style={styles.playButtonText}>Play</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <GamePage setCurrentPage={setCurrentPage} />
+      )}
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

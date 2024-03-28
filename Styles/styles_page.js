@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   },
   scoreContainer: {
     position: 'absolute',
-    top: 250,
+    top: 680,
     alignSelf: 'center',
   },
   infoText: {
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ecf0f1',
     width: "100%",
-    height: "100%",
+    height:200
   },
   homeTitle: {
     fontSize: 24,
@@ -94,5 +94,11 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
+  },
+  resetButton: {
+    padding: 10,
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+    marginTop: 50,
   },
 });

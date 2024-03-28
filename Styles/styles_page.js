@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const cardMargin = 10;
-const cardsPerRow = 4; // Adjust based on your layout preference
+const cardsPerRow = 4;
 const cardWidth = (width - cardMargin * 2 * cardsPerRow) / cardsPerRow;
 
 export const styles = StyleSheet.create({
@@ -29,25 +29,21 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 4,
   },
-  // Adjusted to position Time and Attempts at the top right
-  infoContainer: {
+  infoContainerLeft: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    alignItems: 'flex-end',
+    top: 50,
+    left: 10,
+    alignItems: 'flex-start',
   },
-  // Adjusted for Score at the top center
   scoreContainer: {
     position: 'absolute',
-    top: 10,
-    left: width / 2,
-    transform: [{ translateX: -50 }], // Centers the score based on its width
+    top: 250,
+    alignSelf: 'center',
   },
   infoText: {
     fontSize: 18,
     color: '#333',
-    textAlign: 'center',
-    marginBottom: 5, // Space between Time and Attempts for clarity
+    marginBottom: 5,
   },
   scoreText: {
     fontSize: 20,
@@ -70,6 +66,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ecf0f1',
+    width: "100%",
+    height: "100%",
   },
   homeTitle: {
     fontSize: 24,

@@ -1,143 +1,105 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, Alert, Vibration, Animated } from 'react-native';
-import { Audio } from 'expo-av';
-import { styles } from './Styles/styles_page'; // Make sure this path is correct
+import { View, Text, Pressable, Alert, Animated, StyleSheet } from 'react-native';
+import { styles } from './Styles/styles_page'; 
 
-const cardPairs = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+const cardColors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33'];
 const generateCards = () => {
-  const pairIds = cardPairs.flatMap((pair) => [pair, pair]);
-  return pairIds.map((content, index) => ({
-    id: `card-${index}`,
-    content,
-    isFlipped: false,
-    isMatched: false,
-    flipAnim: new Animated.Value(0), // Initialize flip animation value
-  }));
+    return cardColors.flatMap((color, index) => [
+        { id: `card-${index * 2}`, color, isMatched: false, flipAnim: new Animated.Value(0) },
+        { id: `card-${index * 2 + 1}`, color, isMatched: false, flipAnim: new Animated.Value(0) },
+    ]).sort(() => Math.random() - 0.5);
 };
 
-const GamePage = ({ setCurrentPage }) => {
-  const [cards, setCards] = useState(generateCards());
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [canSelect, setCanSelect] = useState(true); // Control card selection
-  const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [attempts, setAttempts] = useState(0);
+const GamePage = () => {
+    const [cards, setCards] = useState(generateCards());
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [canSelect, setCanSelect] = useState(true);
+    const [score, setScore] = useState(0);
+    const [timer, setTimer] = useState(0);
+    const [attempts, setAttempts] = useState(0);
 
-  useEffect(() => {
-    setCards(shuffleCards(generateCards()));
-    const timerInterval = setInterval(() => {
-      setTimer((t) => t + 1);
-    }, 1000);
-    return () => clearInterval(timerInterval);
-  }, []);
+    useEffect(() => {
+        const timerInterval = setInterval(() => {
+            setTimer(prevTimer => prevTimer + 1);
+        }, 1000);
+        return () => clearInterval(timerInterval);
+    }, []);
 
-  const shuffleCards = (cardsArray) => cardsArray.sort(() => Math.random() - 0.5);
-
-  const handleCardPress = (cardIndex) => {
-    if (!canSelect || selectedIds.length === 2 || cards[cardIndex].isFlipped) return;
-
-    const newCards = cards.map((card, index) =>
-      index === cardIndex ? { ...card, isFlipped: true } : card
-    );
-    setSelectedIds([...selectedIds, cardIndex]);
-
-    Animated.timing(newCards[cardIndex].flipAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-
-    if (selectedIds.length === 1) {
-      setCanSelect(false); // Prevent more selections
-      setAttempts((a) => a + 1);
-      setTimeout(() => processCardSelection(newCards, cardIndex), 300);
-    } else {
-      setCards(newCards);
-    }
-  };
-
-  const processCardSelection = (newCards, cardIndex) => {
-    const firstCardIndex = selectedIds[0];
-    const secondCardIndex = cardIndex;
-    const match = newCards[firstCardIndex].content === newCards[secondCardIndex].content;
-
-    if (match) {
-      playSound();
-      setScore((s) => s + 1000);
-      // Mark cards as matched and reset selected cards
-      const updatedCards = newCards.map((card) =>
-        selectedIds.includes(card.id) ? { ...card, isMatched: true } : card
-      );
-      setCards(updatedCards);
-    } else {
-      Vibration.vibrate();
-      // Flip cards back over
-      newCards.forEach((card, idx) => {
-        if ([firstCardIndex, secondCardIndex].includes(idx)) {
-          Animated.timing(card.flipAnim, {
-            toValue: 0,
+    const handleCardPress = (index) => {
+        if (!canSelect || selectedIds.length === 2 || cards[index].flipAnim._value > 0) return;
+        let newSelectedIds = [...selectedIds, index];
+        setSelectedIds(newSelectedIds);
+        Animated.timing(cards[index].flipAnim, {
+            toValue: 1,
             duration: 300,
             useNativeDriver: false,
-          }).start(() => {
-            // After animation, set cards to unflipped state
-            card.isFlipped = false;
-          });
+        }).start(() => {
+            if (newSelectedIds.length === 2) {
+                checkForMatch(newSelectedIds);
+            }
+        });
+    };
+
+    const checkForMatch = (indices) => {
+        setCanSelect(false);
+        setTimeout(() => {
+            const [firstIndex, secondIndex] = indices;
+            if (cards[firstIndex].color === cards[secondIndex].color) {
+                setScore(prevScore => prevScore + 100);
+                let updatedCards = cards.map((card, idx) => {
+                    if (indices.includes(idx)) {
+                        return { ...card, isMatched: true };
+                    }
+                    return card;
+                });
+                setCards(updatedCards);
+            } else {
+                indices.forEach(idx => {
+                    Animated.timing(cards[idx].flipAnim, {
+                        toValue: 0,
+                        duration: 300,
+                        useNativeDriver: false,
+                    }).start();
+                });
+            }
+            setSelectedIds([]);
+            setCanSelect(true);
+            setAttempts(prevAttempts => prevAttempts + 1);
+        }, 1000);
+    };
+
+    useEffect(() => {
+        if (cards.every(card => card.isMatched)) {
+            Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`);
         }
-      });
-    }
-    setSelectedIds([]);
-    setCanSelect(true); // Allow new selections
-  };
-
-  const playSound = async () => {
-    const sound = new Audio.Sound();
-    try {
-      await sound.loadAsync(require('../Sounds/matched_sound.mp3')); // Ensure path is correct
-      await sound.playAsync();
-      // Optionally, unload the sound after playing to free resources
-    } catch (error) {
-      console.error("Couldn't play sound", error);
-    }
-  };
-
-  useEffect(() => {
-    if (cards.every((card) => card.isMatched)) {
-      Alert.alert(`Game Completed!`, `Score: ${score}\nTime: ${timer} seconds\nAttempts: ${attempts}`);
-      // Optionally, navigate to a score page or reset the game here
-    }
-  }, [cards, score, timer, attempts]);
-
-    // Continuing inside GamePage component...
+    }, [cards, attempts, timer]);
 
     return (
         <View style={styles.container}>
-          <View style={styles.cardGrid}>
-            {cards.map((card, index) => (
-              <Pressable key={card.id} onPress={() => handleCardPress(index)} disabled={!canSelect || card.isMatched}>
-                <Animated.View style={[
-                    styles.card, 
-                    card.isMatched ? styles.matchedCard : styles.unflippedCard,
-                    { transform: [{ rotateY: card.flipAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', '180deg'] }) 
-                    }] }
-                  ]}>
-                  <Text style={styles.cardText}>
-                    {card.isFlipped || card.isMatched ? card.content : ''}
-                  </Text>
-                </Animated.View>
-              </Pressable>
-            ))}
-          </View>
-          <Text style={styles.timer}>Time: {timer}s</Text>
-          <Text style={styles.attempts}>Attempts: {attempts}</Text>
-          <Text style={styles.score}>Score: {score}</Text>
-          <Pressable style={styles.button} onPress={() => setCurrentPage('Home')}>
-            <Text style={styles.buttonText}>Return to Home</Text>
-          </Pressable>
+            <View style={styles.cardGrid}>
+                {cards.map((card, index) => (
+                    <Pressable key={card.id} onPress={() => handleCardPress(index)} disabled={!canSelect || card.isMatched}>
+                        <Animated.View style={[styles.card, {
+                            backgroundColor: card.flipAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ['#ecf0f1', card.color] // Color shows upon flipping
+                            }),
+                            transform: [{ scale: card.flipAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.2] }) }] // Optional: Scale effect for feedback
+                        }]} />
+                    </Pressable>
+                ))}
+            </View>
+            <View style={styles.infoContainer}>
+                <Text style={styles.infoText}>Time: {timer}s</Text>
+                <Text style={styles.infoText}>Attempts: {attempts}</Text>
+            </View>
+            <View style={styles.scoreContainer}>
+                <Text style={styles.scoreText}>Score: {score}</Text>
+            </View>
         </View>
-      );
-    };
-    
-    export default GamePage;
-    
+    );
+};
+
+export default GamePage;
+

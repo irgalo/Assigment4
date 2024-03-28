@@ -2,7 +2,8 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const cardMargin = 10;
-const cardWidth = (width - cardMargin * 8) / 3;
+const cardsPerRow = 4; // Adjust based on your layout preference
+const cardWidth = (width - cardMargin * 2 * cardsPerRow) / cardsPerRow;
 
 export const styles = StyleSheet.create({
   container: {
@@ -14,10 +15,9 @@ export const styles = StyleSheet.create({
   cardGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
-    width: '100%',
   },
   card: {
     width: cardWidth,
@@ -29,28 +29,30 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 4,
   },
-  flippedCard: {
-    backgroundColor: '#2ecc71',
+  // Adjusted to position Time and Attempts at the top right
+  infoContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    alignItems: 'flex-end',
   },
-  unflippedCard: {
-    backgroundColor: '#95a5a6',
+  // Adjusted for Score at the top center
+  scoreContainer: {
+    position: 'absolute',
+    top: 10,
+    left: width / 2,
+    transform: [{ translateX: -50 }], // Centers the score based on its width
   },
-  cardText: {
-    fontSize: 24,
+  infoText: {
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 5, // Space between Time and Attempts for clarity
+  },
+  scoreText: {
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#34495e',
-  },
-  timer: {
-    fontSize: 20,
-    position: 'absolute',
-    top: 20,
-    right: 20,
-  },
-  attempts: {
-    fontSize: 20,
-    position: 'absolute',
-    top: 50,
-    right: 20,
+    color: '#333',
   },
   button: {
     padding: 10,
@@ -84,7 +86,6 @@ export const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
-  // Additional styles for navigation buttons, if needed
   backButton: {
     padding: 10,
     backgroundColor: '#e74c3c',

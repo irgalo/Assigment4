@@ -13,7 +13,7 @@ const App = () => {
           <Text style={styles.homeTitle}>Welcome to the Memory Game</Text>
           <Pressable
             style={styles.playButton}
-            onPress={() => setCurrentPage('GamePage')}
+            onPress={() => setCurrentPage('GamePage')} // Make sure 'GamePage' matches the state condition to render the GamePage component.
           >
             <Text style={styles.playButtonText}>Play</Text>
           </Pressable>

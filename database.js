@@ -1,7 +1,7 @@
 /**
  * Author: Irah Loreto
- * Purpose - Manages data interactions for the app, such as storing high scores. creates the tables for the scores.
- * Error - There are alot of console logs i had to alot of debugging. The databse is not properly collecting the username and displaying it. I had to omit due to time constraints.
+ * Purpose - Manages data interactions for the app, such as storing high scores. Creates the tables for the scores.
+ * Error - There are a lot of console logs I had to do a lot of debugging. The database is not properly collecting the username and displaying it. I had to omit due to time constraints.
  * database.js
  */
 
@@ -9,6 +9,7 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('game.db');
 
+// Function to initialize the database create the tables
 const init = () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -34,6 +35,7 @@ const init = () => {
   });
 };
 
+// Function to insert a score into the high_scores table
 const insertScore = (score, time, attempts, username) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -53,6 +55,7 @@ const insertScore = (score, time, attempts, username) => {
   });
 };
 
+// Function to fetch scores from the high_scores table
 const fetchScores = () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {

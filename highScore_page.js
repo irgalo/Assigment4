@@ -1,18 +1,20 @@
 /**
  * Author: Irah Loreto
  * Purpose - Displays the high scores from all players. It showcases rankings, allowing users to see their performance.
- * Errors - Unfortuanly I There is an error displaying the username. I have no clue to fix that. But the other scores should display
+ * Errors - Unfortunately, there is an error displaying the username. I have no clue how to fix that. But the other scores should display.
  * highScore_page.js
  */
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
-import { database } from './database'; // Adjust path as needed
-import { styles } from './Styles/styles_page'; // Adjust path as needed
+import { database } from './database'; // Importing database functions
+import { styles } from './Styles/styles_page'; // Importing styles
 
+// HighScorePage component
 const HighScorePage = ({ setCurrentPage }) => {
-  const [highScores, setHighScores] = useState([]);
+  const [highScores, setHighScores] = useState([]); // State variable to store high scores
 
+  // Effect hook to fetch high scores from the database
   useEffect(() => {
     database.fetchScores()
       .then(scores => {

@@ -1,7 +1,7 @@
 /**
  * Author: Irah Loreto
  * Purpose - Allows users to create and edit their profile, including setting a username and choosing a profile picture.
- * Errors - Unfortuanly this page did not work with the database well on displaying the user name and profile name in other pages. I had to omit that feature
+ * Errors - Unfortunately, this page did not work well with the database in displaying the username and profile name on other pages. I had to omit that feature.
  * profile_page.js
  */
 
@@ -10,12 +10,15 @@ import { View, Text, TextInput, Button, Image, Alert, Pressable } from 'react-na
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { styles } from './Styles/styles_page';
+import { styles } from './Styles/styles_page'; // Importing styles
 
+// ProfilePage components
 const ProfilePage = ({ setCurrentPage }) => {
-  const [username, setUsername] = useState('');
-  const [profilePicUri, setProfilePicUri] = useState(null);
+  // State variables
+  const [username, setUsername] = useState(''); // Username input field
+  const [profilePicUri, setProfilePicUri] = useState(null); // Profile picture URI
 
+  // Effect hook to request camera and media permissions and load saved username and profile picture
   useEffect(() => {
     (async () => {
       const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
@@ -23,7 +26,7 @@ const ProfilePage = ({ setCurrentPage }) => {
       if (cameraStatus.status !== 'granted' || mediaStatus.status !== 'granted') {
         Alert.alert('Sorry, we need camera and media permissions to make this work!');
       }
-      // Load saved username and profile picture
+      // Loads saved username and profile picture from AsyncStorage
       const savedUsername = await AsyncStorage.getItem('username');
       const savedProfilePicUri = await AsyncStorage.getItem('profilePicUri');
       if (savedUsername) setUsername(savedUsername);
@@ -31,6 +34,7 @@ const ProfilePage = ({ setCurrentPage }) => {
     })();
   }, []);
 
+  // Function to take a picture using the device's camera
   const takePicture = async () => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
@@ -39,11 +43,12 @@ const ProfilePage = ({ setCurrentPage }) => {
     });
 
     if (!result.cancelled) {
-      const asset = await MediaLibrary.createAssetAsync(result.uri); // Save the photo to the library
+      const asset = await MediaLibrary.createAssetAsync(result.uri); // Saves the photo to the Phone Library / allows acces to upload from Phone Library
       setProfilePicUri(asset.uri);
     }
   };
 
+  // Function to save profile information to AsyncStorage - This is not working idk why
   const saveProfile = async () => {
     await AsyncStorage.setItem('username', username);
     await AsyncStorage.setItem('profilePicUri', profilePicUri);

@@ -138,11 +138,11 @@ export const styles = StyleSheet.create({
   },
   gamePage_buttonContainer: {
     flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '150%',
-      paddingHorizontal: 120,
-      position: 'absolute',
-      top: 240, // Adjust the position from the bottom
+    justifyContent: 'space-between',
+    width: '150%',
+    paddingHorizontal: 120,
+    position: 'absolute',
+    top: 240, 
   },
   backButton: {
     paddingVertical: 10,
@@ -176,6 +176,8 @@ export const styles = StyleSheet.create({
     marginHorizontal: 10, 
     top:300,
   },
+  
+  // Profile Page Styles
   profileContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -231,6 +233,8 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+
+  // Landscape Styles for Game Page
   containerLandscape: {
     flex: 1,
     flexDirection: 'row',
@@ -244,19 +248,19 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardLandscape: {
-    width: 60, // Adjusts size for landscape
-    height: 60, // Adjusts size for landscape
-    margin: 5, // Adjusts margin for landscape
+    width: 60, 
+    height: 60, 
+    margin: 5, 
   },
   scoreContainerLandscape: {
     position: 'absolute',
-    bottom: 20, // Adjusts position for landscape
-    right: 20, // Adjusts position for landscape
+    bottom: 20, 
+    right: 20, 
   },
   infoContainerLeftLandscape: {
     position: 'absolute',
-    top: 20, // Adjusts position for landscape
-    left: 20, // Adjusts position for landscape
+    top: 20, 
+    left: 20, 
     alignItems: 'flex-start',
   },
 

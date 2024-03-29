@@ -6,11 +6,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Alert, Animated, Vibration, Button, Dimensions } from 'react-native';
-import { styles } from './Styles/styles_page';
-import { database } from './database';
+import { styles } from './Styles/styles_page'; // Importing styles
+import { database } from './database'; // Importing database functions
 
+// Array for colors for card backgrounds
 const cardColors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33'];
 
+// Function to generate cards with colors and IDs
 const generateCards = () => {
   return cardColors.flatMap((color, index) => [
     { id: `card-${index * 2}`, color, isMatched: false, flipAnim: new Animated.Value(0) },
@@ -18,21 +20,25 @@ const generateCards = () => {
   ]).sort(() => Math.random() - 0.5);
 };
 
+// Main GamePage components
 const GamePage = ({ setCurrentPage }) => {
-  const [cards, setCards] = useState(generateCards());
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [canSelect, setCanSelect] = useState(true);
-  const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [attempts, setAttempts] = useState(0);
-  const [matchedPairs, setMatchedPairs] = useState(0);
-  const [orientation, setOrientation] = useState(getOrientation());
+  // State variables
+  const [cards, setCards] = useState(generateCards()); // Array of cards
+  const [selectedIds, setSelectedIds] = useState([]); // IDs of selected cards
+  const [canSelect, setCanSelect] = useState(true); // Flag to enable card selection
+  const [score, setScore] = useState(0); // Current score
+  const [timer, setTimer] = useState(0); // Timer for the game
+  const [attempts, setAttempts] = useState(0); // Number of attempts
+  const [matchedPairs, setMatchedPairs] = useState(0); // Number of matched pairs
+  const [orientation, setOrientation] = useState(getOrientation()); // Device orientation
 
+  // Function to get device orientation
   function getOrientation() {
     const dim = Dimensions.get('screen');
     return dim.height >= dim.width ? 'portrait' : 'landscape';
   }
 
+  // Effect hook to handle orientation change
   useEffect(() => {
     const orientationChangeHandler = () => {
       setOrientation(getOrientation());
@@ -45,6 +51,7 @@ const GamePage = ({ setCurrentPage }) => {
     };
   }, []);
 
+  // Effect hook to update timer every second
   useEffect(() => {
     const timerInterval = setInterval(() => {
       setTimer(prevTimer => prevTimer + 1);
@@ -52,6 +59,7 @@ const GamePage = ({ setCurrentPage }) => {
     return () => clearInterval(timerInterval);
   }, []);
 
+  // Effect hook to handle game completion
   useEffect(() => {
     if (matchedPairs === cardColors.length) {
       setTimeout(() => {
@@ -66,12 +74,13 @@ const GamePage = ({ setCurrentPage }) => {
     }
   }, [matchedPairs]);
 
+  // Function to handle card press
   const handleCardPress = (index) => {
     if (!canSelect || selectedIds.includes(index) || cards[index].flipAnim._value > 0) return;
   
     const newSelectedIds = [...selectedIds, index];
     setSelectedIds(newSelectedIds);
-    setAttempts(prevAttempts => prevAttempts + 1); // Increment attempts
+    setAttempts(prevAttempts => prevAttempts + 1); 
     Animated.timing(cards[index].flipAnim, {
       toValue: 1,
       duration: 300,
@@ -85,7 +94,7 @@ const GamePage = ({ setCurrentPage }) => {
     });
   };
   
-
+  // Function to check if selected cards match
   const checkForMatch = (indices) => {
     const [firstIndex, secondIndex] = indices;
     const match = cards[firstIndex].color === cards[secondIndex].color;
@@ -100,6 +109,7 @@ const GamePage = ({ setCurrentPage }) => {
     setSelectedIds([]);
   };
   
+  // Function to handle matching cards
   const handleMatch = (indices) => {
     console.log("Handling match...");
     setScore(prevScore => prevScore + 100);
@@ -108,6 +118,7 @@ const GamePage = ({ setCurrentPage }) => {
     setMatchedPairs(prevPairs => prevPairs + 1);
   };
 
+  // Function to handle mismatched cards
   const handleMismatch = (indices) => {
     console.log("Handling mismatch...");
     Vibration.vibrate();
@@ -122,6 +133,7 @@ const GamePage = ({ setCurrentPage }) => {
     }, 1000);
   };
 
+  // Function list for to start the game
   const startGame = () => {
     console.log("Starting game...");
     setCards(generateCards());
@@ -133,6 +145,7 @@ const GamePage = ({ setCurrentPage }) => {
     setMatchedPairs(0);
   };
 
+  // Function list for to reset the game
   const resetGame = () => {
     console.log("Resetting game...");
     setCards(generateCards());
@@ -144,6 +157,7 @@ const GamePage = ({ setCurrentPage }) => {
     setMatchedPairs(0);
   };
 
+  // Function to save game data to the database
   const saveGameData = () => {
     console.log("Saving game data...");
     database.insertScore(score, timer, attempts, (success, result) => {

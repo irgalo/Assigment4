@@ -1,21 +1,25 @@
-import React from 'react';
+// HighScorePage component
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
-import { styles } from './Styles/styles_page'; // Adjust the import path as necessary
+import { database } from './database'; // Make sure this path is correct
 
 const HighScorePage = ({ setCurrentPage }) => {
-  const navigation = useNavigation(); // Access navigation object
+  const [highScores, setHighScores] = useState([]);
 
-  const handleHomePress = () => {
-    setCurrentPage('Home');
-  };
+  useEffect(() => {
+    database.fetchScores(setHighScores);
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.homeTitle}>High Scores</Text>
-      {/* Display high scores here */}
-      <Pressable style={styles.backButton} onPress={handleHomePress}>
-        <Text style={styles.backButtonText}>Back to Home</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>High Scores</Text>
+      {highScores.map((score, index) => (
+        <Text key={index}>
+          Score: {score.score}, Time: {score.time}, Attempts: {score.attempts}
+        </Text>
+      ))}
+      <Pressable onPress={() => setCurrentPage('Home')}>
+        <Text>Back to Home</Text>
       </Pressable>
     </View>
   );

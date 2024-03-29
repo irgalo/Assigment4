@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Alert, Animated, Vibration, Button } from 'react-native';
 import { styles } from './Styles/styles_page';
 
+
 const cardColors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33'];
 
 const generateCards = () => {
@@ -21,11 +22,19 @@ const GamePage = () => {
     const [gameCompleted, setGameCompleted] = useState(false);
 
     useEffect(() => {
-        const timerInterval = setInterval(() => {
-            setTimer(prevTimer => prevTimer + 1);
-        }, 1000);
-        return () => clearInterval(timerInterval);
-    }, []);
+      const timerInterval = setInterval(() => {
+          setTimer(prevTimer => prevTimer + 1);
+      }, 1000);
+      return () => clearInterval(timerInterval);
+  }, []);
+
+  useEffect(() => {
+      if (gameCompleted) {
+          Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`, [
+            { text: "OK", onPress: () => setCurrentPage('HighScores') }
+          ]);
+      }
+  }, [gameCompleted]);
 
     const handleCardPress = async (index) => {
       // Check if the card is already in the process of being flipped or matched
@@ -54,18 +63,29 @@ const GamePage = () => {
   };
   
   const checkForMatch = (indices) => {
-      const [firstIndex, secondIndex] = indices;
-      const match = cards[firstIndex].color === cards[secondIndex].color;
-  
-      if (match) {
-          // Handle a match
-          handleMatch(indices);
-      } else {
-          // Handle a mismatch
-          handleMismatch(indices);
-      }
-  };
-    
+    const [firstIndex, secondIndex] = indices;
+    const match = cards[firstIndex].color === cards[secondIndex].color;
+    if (match) {
+        // Handle a match
+        handleMatch(indices);
+    } else {
+        // Handle a mismatch
+        handleMismatch(indices);
+    }
+    // Check if all cards are matched after handling the current pair
+    const allMatched = cards.every(card => card.isMatched);
+    if (allMatched) {
+        // Set game as completed
+        setGameCompleted(true);
+        // Show alert and navigate to High Scores page upon acknowledgment
+        Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`,
+            [
+                { text: "OK", onPress: () => setCurrentPage('HighScores') } // Assuming setCurrentPage is a prop function for navigation
+            ]
+        );
+    }
+};
+
   // Handle the case where two cards match
   const handleMatch = (indices) => {
       setScore(prevScore => prevScore + 100);

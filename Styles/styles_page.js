@@ -113,4 +113,24 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ff4444',
     borderRadius: 5,
   },
+  homepageButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 50, // Adjust based on your needs
+    width: '100%',
+  },
+  homepageButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#3498db', // Feel free to choose your color
+    borderRadius: 5,
+    marginHorizontal: 10, // Space between buttons
+  },
+  homepageButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+  },
 });

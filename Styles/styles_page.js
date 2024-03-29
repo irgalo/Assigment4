@@ -20,8 +20,8 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   card: {
-    width: 75, // Fixed size for debugging
-    height: 75, // Fixed size for debugging
+    width: 75, 
+    height: 75, 
     justifyContent: 'center',
     alignItems: 'center',
     margin: cardMargin,
@@ -118,15 +118,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 50, // Adjust based on your needs
+    bottom: 50, 
     width: '100%',
   },
   homepageButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#3498db', // Feel free to choose your color
+    backgroundColor: '#3498db', 
     borderRadius: 5,
-    marginHorizontal: 10, // Space between buttons
+    marginHorizontal: 10, 
   },
   homepageButtonText: {
     color: '#fff',

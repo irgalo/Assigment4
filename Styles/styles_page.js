@@ -231,23 +231,5 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-  profileContainer: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    alignItems: 'center',
-  },
-  usernameText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5, 
-  },
-  profilePicture: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  
 
 });

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Alert, Animated, Vibration, Button } from 'react-native';
 import { styles } from './Styles/styles_page';

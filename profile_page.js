@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, Alert, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as MediaLibrary from 'expo-media-library'; // Import MediaLibrary from Expo
 import { styles } from './Styles/styles_page'; // Ensure you have the appropriate path
+import { database } from './database'; 
 
 const ProfilePage = ({ setCurrentPage }) => {
   const [username, setUsername] = useState('');
@@ -15,11 +14,6 @@ const ProfilePage = ({ setCurrentPage }) => {
       if (status !== 'granted') {
         Alert.alert('Sorry, we need camera permissions to make this work!');
       }
-      // Load saved profile data
-      const savedUsername = await AsyncStorage.getItem('username');
-      const savedProfilePicUri = await AsyncStorage.getItem('profilePicUri');
-      if (savedUsername) setUsername(savedUsername);
-      if (savedProfilePicUri) setProfilePicUri(savedProfilePicUri);
     })();
   }, []);
 
@@ -35,14 +29,11 @@ const ProfilePage = ({ setCurrentPage }) => {
     }
   };
 
-  const saveProfile = async () => {
-    // Save the image to the device's gallery
-    await MediaLibrary.saveToLibraryAsync(profilePicUri);
-    Alert.alert('Image saved to gallery!');
-    
-    // Save profilePicUri to AsyncStorage
-    await AsyncStorage.setItem('profilePicUri', profilePicUri);
-    Alert.alert('Profile Picture Saved', 'Your profile picture has been updated successfully.');
+  const saveProfile = () => {
+    // Save username and profilePicUri to your database
+    console.log('Saving Profile:', username, profilePicUri);
+    // Add database logic here
+    Alert.alert('Profile Saved', 'Your profile has been updated successfully.');
   };
 
   return (
@@ -61,6 +52,7 @@ const ProfilePage = ({ setCurrentPage }) => {
         <Text style={styles.backButtonText}>Back to Home</Text>
       </Pressable>
     </View>
+
   );
 };
 

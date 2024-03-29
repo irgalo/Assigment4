@@ -1,85 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
-import GamePage from './game_page';
-import HighScorePage from './highScore_page';
-import ProfilePage from './profile_page';
-import { database } from './database';
-import { styles } from './Styles/styles_page';
+import * as SQLite from 'expo-sqlite';
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState('Home');
-  const [username, setUsername] = useState('User 1'); // Default username
-  const [highScores, setHighScores] = useState([]);
+const db = SQLite.openDatabase('game.db');
 
-  useEffect(() => {
-    // Initialize database
-    database.init();
-    // Fetch high scores
-    fetchHighScores();
-    // Fetch user profile
-    fetchUserProfile();
-  }, []);
-
-  const fetchHighScores = () => {
-    database.fetchScores(scores => {
-      setHighScores(scores);
-    });
-  };
-
-  const fetchUserProfile = () => {
-    database.fetchUserProfile((success, userProfile) => {
-      if (success && userProfile) {
-        setUsername(userProfile.username);
-      } else {
-        // Handle case when user profile is not found
-        console.log('User profile not found');
-      }
-    });
-  };
-
-  const renderHeader = () => {
-    if (currentPage === 'Game' || currentPage === 'Home') {
-      return (
-        <View style={styles.profileHeaderContainer}>
-          <Text style={styles.profileHeaderText}>{username}</Text>
-          {/* You can add profile picture here if needed */}
-        </View>
-      );
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      {renderHeader()}
-      {currentPage === 'Home' && (
-        <View style={styles.homeContainer}>
-          <Text style={styles.homeTitle}>Welcome to the Memory Game</Text>
-          <View style={styles.homepageButtonContainer}>
-            <Pressable
-              style={styles.playButton}
-              onPress={() => setCurrentPage('Game')}>
-              <Text style={styles.playButtonText}>Play Game</Text>
-            </Pressable>
-            <Pressable
-              style={styles.playButton}
-              onPress={() => setCurrentPage('HighScores')}>
-              <Text style={styles.playButtonText}>High Scores</Text>
-            </Pressable>
-            <Pressable
-              style={styles.playButton}
-              onPress={() => setCurrentPage('Profile')}>
-              <Text style={styles.playButtonText}>Profile</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
-      {currentPage === 'Game' && <GamePage setCurrentPage={setCurrentPage} />}
-      {currentPage === 'HighScores' && (
-        <HighScorePage setCurrentPage={setCurrentPage} highScores={highScores} />
-      )}
-      {currentPage === 'Profile' && <ProfilePage setCurrentPage={setCurrentPage} />}
-    </View>
-  );
+// In your database.js or equivalent file
+const init = () => {
+  db.transaction(tx => {
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS high_scores (
+        id INTEGER PRIMARY KEY NOT NULL,
+        score INTEGER,
+        time INTEGER,
+        attempts INTEGER,
+        username TEXT,
+        pictureUri TEXT
+      );`,
+      [],
+      () => console.log('Table created successfully'),
+      (_, err) => console.log(err)
+    );
+  });
 };
 
-export default App;
+// Adjust insertScore to include username and pictureUri
+const insertScore = (score, time, attempts, username, pictureUri, callback) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      `INSERT INTO high_scores (score, time, attempts, username, pictureUri) VALUES (?, ?, ?, ?, ?);`,
+      [score, time, attempts, username, pictureUri],
+      (_, result) => callback(true, result),
+      (_, err) => {
+        console.log(err);
+        callback(false, err);
+      }
+    );
+  });
+};
+
+// Ensure fetchScores retrieves the new fields
+const fetchScores = callback => {
+  db.transaction(tx => {
+    tx.executeSql(
+      `SELECT * FROM high_scores ORDER BY score DESC, time ASC, attempts ASC;`,
+      [],
+      (_, result) => callback(result.rows._array),
+      (_, err) => console.log(err)
+    );
+  });
+};
+
+  
+
+export const database = {
+  init,
+  insertScore,
+  fetchScores,
+};

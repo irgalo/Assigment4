@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Alert, Animated, Vibration } from 'react-native';
-import { styles } from './Styles/styles_page';
+import { styles } from './Styles/styles_page'; // Ensure this path is correctly pointed to your styles file
 
 const cardColors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33'];
 
@@ -72,8 +72,8 @@ const GamePage = () => {
   };
 
   const resetGame = () => {
-    const newCards = generateCards(); // Generate new cards with random sorting
-    setCards(newCards);
+    setCards(generateCards());
+    setSelectedIds([]);
     setCanSelect(true);
     setScore(0);
     setTimer(0);
@@ -91,20 +91,17 @@ const GamePage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.resetButton} onPress={resetGame}>
+        <Pressable style={styles.button} onPress={resetGame}>
           <Text style={styles.buttonText}>Reset Game</Text>
         </Pressable>
       </View>
-
       <View style={styles.infoContainerLeft}>
         <Text style={styles.infoText}>Time: {timer}s</Text>
         <Text style={styles.infoText}>Attempts: {attempts}</Text>
       </View>
-
       <View style={styles.scoreContainer}>
         <Text style={styles.scoreText}>Score: {score}</Text>
       </View>
-
       <View style={styles.cardGrid}>
         {cards.map((card, index) => (
           <Pressable key={card.id} onPress={() => handleCardPress(index)} disabled={!canSelect || card.isMatched}>

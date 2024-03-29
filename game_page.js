@@ -27,56 +27,63 @@ const GamePage = () => {
         return () => clearInterval(timerInterval);
     }, []);
 
-    const handleCardPress = (index) => {
-      if (!canSelect || selectedIds.length >= 2 || cards[index].flipAnim._value > 0 || gameCompleted) return;
+    const handleCardPress = async (index) => {
+      // Check if the card is already in the process of being flipped or matched
+      if (!canSelect || selectedIds.includes(index) || cards[index].flipAnim._value > 0 || gameCompleted) return;
   
       const newSelectedIds = [...selectedIds, index];
+      setSelectedIds(newSelectedIds); // Immediately update the selected indices
+  
+      // Prevent double tapping the same card by disabling it temporarily
       Animated.timing(cards[index].flipAnim, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true,
-      }).start();
-  
-      if (newSelectedIds.length === 2) {
-          // Block further selections
-          setCanSelect(false);
-  
-          setTimeout(() => {
-              checkForMatch(newSelectedIds);
-              // Re-enable selection after the match check delay
-              setCanSelect(true);
-          }, 300); // Adjust the delay as needed for visibility
-      }
-  
-      setSelectedIds(newSelectedIds);
+      }).start(({ finished }) => {
+          // Only proceed if the animation finished successfully
+          if (finished && newSelectedIds.length === 2) {
+              setCanSelect(false); // Temporarily prevent further selections
+              // Add a slight delay before checking for a match to allow the user to view the second card
+              setTimeout(() => {
+                  checkForMatch(newSelectedIds);
+                  setSelectedIds([]); // Clear the array of selected IDs for the next selection
+                  setCanSelect(true); // Allow selections again
+              }, 500); // Adjust timing as necessary for a better user experience
+          }
+      });
   };
   
   const checkForMatch = (indices) => {
       const [firstIndex, secondIndex] = indices;
-      const firstCard = cards[firstIndex];
-      const secondCard = cards[secondIndex];
+      const match = cards[firstIndex].color === cards[secondIndex].color;
   
-      if (firstCard.color === secondCard.color) {
-          setScore(prevScore => prevScore + 100);
-          const updatedCards = cards.map((card, idx) =>
-              indices.includes(idx) ? { ...card, isMatched: true, flipAnim: new Animated.Value(1) } : card);
-          setCards(updatedCards);
+      if (match) {
+          // Handle a match
+          handleMatch(indices);
       } else {
-          Vibration.vibrate();
-          indices.forEach(idx => {
-              Animated.timing(cards[idx].flipAnim, {
-                  toValue: 0,
-                  duration: 300,
-                  useNativeDriver: true,
-              }).start(() => {
-                  // This callback ensures that the state updates happen after the animation.
-                  // It might be necessary to adjust this logic based on your animation flow.
-              });
-          });
+          // Handle a mismatch
+          handleMismatch(indices);
       }
+  };
+    
+  // Handle the case where two cards match
+  const handleMatch = (indices) => {
+      setScore(prevScore => prevScore + 100);
+      let newCards = cards.map((card, idx) =>
+          indices.includes(idx) ? { ...card, isMatched: true } : card);
+      setCards(newCards);
+  };
   
-      // Clear the selected indices after the check, preparing for the next selection
-      setSelectedIds([]);
+  // Handle the case where two cards do not match
+  const handleMismatch = (indices) => {
+      Vibration.vibrate();
+      indices.forEach(idx => {
+          Animated.timing(cards[idx].flipAnim, {
+              toValue: 0,
+              duration: 300,
+              useNativeDriver: true,
+          }).start();
+      });
   };
   
     const startGame = () => {

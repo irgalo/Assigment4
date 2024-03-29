@@ -1,57 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import GamePage from './game_page';
 import HighScorePage from './highScore_page';
-import ProfilePage from './profile_page'; // Make sure the path is correct
+import ProfilePage from './profile_page';
 import { database } from './database';
 import { styles } from './Styles/styles_page';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('Home');
   
+  const [username, setUsername] = useState('User123');
+  const [profilePicUri, setProfilePicUri] = useState('https://example.com/profile-pic.jpg');
+
   useEffect(() => {
-    // Initializes the database when the app starts
     database.init();
   }, []);
 
+  // Corrected renderHeader function
+  const renderHeader = () => {
+    if (currentPage === 'Game' || currentPage === 'Home') {
+      return (
+        <View style={styles.profileHeaderContainer}>
+          <Text style={styles.profileHeaderText}>{username}</Text>
+          <Image source={{ uri: profilePicUri }} style={styles.profileHeaderImage} />
+        </View>
+      );
+    }
+  };
+
   return (
     <View style={styles.container}>
+      {renderHeader()}
       {currentPage === 'Home' && (
         <View style={styles.homeContainer}>
           <Text style={styles.homeTitle}>Welcome to the Memory Game</Text>
           <View style={styles.homepageButtonContainer}>
             <Pressable
-              style={styles.homepageButton}
-              onPress={() => setCurrentPage('Game')}
-            >
-              <Text style={styles.homepageButtonText}>Play Game</Text>
+              style={styles.playButton}
+              onPress={() => setCurrentPage('Game')}>
+              <Text style={styles.playButtonText}>Play Game</Text>
             </Pressable>
             <Pressable
-              style={styles.homepageButton}
-              onPress={() => setCurrentPage('HighScores')}
-            >
-              <Text style={styles.homepageButtonText}>High Scores</Text>
+              style={styles.playButton}
+              onPress={() => setCurrentPage('HighScores')}>
+              <Text style={styles.playButtonText}>High Scores</Text>
             </Pressable>
-            {/* Added navigation button to the Profile page */}
             <Pressable
-              style={styles.homepageButton}
-              onPress={() => setCurrentPage('Profile')}
-            >
-              <Text style={styles.homepageButtonText}>Profile</Text>
+              style={styles.playButton}
+              onPress={() => setCurrentPage('Profile')}>
+              <Text style={styles.playButtonText}>Profile</Text>
             </Pressable>
           </View>
         </View>
       )}
-      {currentPage === 'Game' && (
-        <GamePage setCurrentPage={setCurrentPage} />
-      )}
-      {currentPage === 'HighScores' && (
-        <HighScorePage setCurrentPage={setCurrentPage} />
-      )}
-      {/* Render the ProfilePage component when currentPage is 'Profile' */}
-      {currentPage === 'Profile' && (
-        <ProfilePage setCurrentPage={setCurrentPage} />
-      )}
+      {currentPage === 'Game' && <GamePage setCurrentPage={setCurrentPage} />}
+      {currentPage === 'HighScores' && <HighScorePage setCurrentPage={setCurrentPage} />}
+      {currentPage === 'Profile' && <ProfilePage setCurrentPage={setCurrentPage} />}
     </View>
   );
 };

@@ -2,9 +2,11 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('game.db');
 
-// In your database.js or equivalent file
 const init = () => {
   db.transaction(tx => {
+    // Uncomment the next line to drop the existing table first - WARNING: This will delete all existing data in the table!
+    // tx.executeSql('DROP TABLE IF EXISTS high_scores;');
+
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS high_scores (
         id INTEGER PRIMARY KEY NOT NULL,
@@ -21,7 +23,6 @@ const init = () => {
   });
 };
 
-// Adjust insertScore to include username and pictureUri
 const insertScore = (score, time, attempts, username, pictureUri, callback) => {
   db.transaction(tx => {
     tx.executeSql(
@@ -36,7 +37,6 @@ const insertScore = (score, time, attempts, username, pictureUri, callback) => {
   });
 };
 
-// Ensure fetchScores retrieves the new fields
 const fetchScores = callback => {
   db.transaction(tx => {
     tx.executeSql(
@@ -48,10 +48,4 @@ const fetchScores = callback => {
   });
 };
 
-  
-
-export const database = {
-  init,
-  insertScore,
-  fetchScores,
-};
+export const database = { init, insertScore, fetchScores };

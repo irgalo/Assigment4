@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Alert, Animated, Vibration, Button } from 'react-native';
-import { styles } from './Styles/styles_page'; // Ensure this path is correctly pointed to your styles file
+import { styles } from './Styles/styles_page';
 
 const cardColors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33'];
 
@@ -12,42 +12,73 @@ const generateCards = () => {
 };
 
 const GamePage = () => {
-    const [cards, setCards] = useState([]);
+    const [cards, setCards] = useState(generateCards());
     const [selectedIds, setSelectedIds] = useState([]);
-    const [canSelect, setCanSelect] = useState(false);
+    const [canSelect, setCanSelect] = useState(true); // Changed to true for initial game state
     const [score, setScore] = useState(0);
     const [timer, setTimer] = useState(0);
     const [attempts, setAttempts] = useState(0);
     const [gameCompleted, setGameCompleted] = useState(false);
 
     useEffect(() => {
-        // Reset timer only when the game starts
-        if (canSelect) {
-            const timerInterval = setInterval(() => {
-                setTimer(prevTimer => prevTimer + 1);
-            }, 1000);
-            return () => clearInterval(timerInterval);
-        }
-    }, [canSelect]);
+        const timerInterval = setInterval(() => {
+            setTimer(prevTimer => prevTimer + 1);
+        }, 1000);
+        return () => clearInterval(timerInterval);
+    }, []);
 
     const handleCardPress = (index) => {
-        if (!canSelect || selectedIds.length === 2 || cards[index].flipAnim._value > 0) return;
-        const newSelectedIds = [...selectedIds, index];
-        setSelectedIds(newSelectedIds);
-        Animated.timing(cards[index].flipAnim, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-        }).start();
-        if (newSelectedIds.length === 2) {
-            checkForMatch(newSelectedIds);
-        }
-    };
-
-    const checkForMatch = (indices) => {
-        // Logic remains similar; ensure to reset selectedIds and allow card selection
-    };
-
+      if (!canSelect || selectedIds.length >= 2 || cards[index].flipAnim._value > 0 || gameCompleted) return;
+  
+      const newSelectedIds = [...selectedIds, index];
+      Animated.timing(cards[index].flipAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+      }).start();
+  
+      if (newSelectedIds.length === 2) {
+          // Block further selections
+          setCanSelect(false);
+  
+          setTimeout(() => {
+              checkForMatch(newSelectedIds);
+              // Re-enable selection after the match check delay
+              setCanSelect(true);
+          }, 300); // Adjust the delay as needed for visibility
+      }
+  
+      setSelectedIds(newSelectedIds);
+  };
+  
+  const checkForMatch = (indices) => {
+      const [firstIndex, secondIndex] = indices;
+      const firstCard = cards[firstIndex];
+      const secondCard = cards[secondIndex];
+  
+      if (firstCard.color === secondCard.color) {
+          setScore(prevScore => prevScore + 100);
+          const updatedCards = cards.map((card, idx) =>
+              indices.includes(idx) ? { ...card, isMatched: true, flipAnim: new Animated.Value(1) } : card);
+          setCards(updatedCards);
+      } else {
+          Vibration.vibrate();
+          indices.forEach(idx => {
+              Animated.timing(cards[idx].flipAnim, {
+                  toValue: 0,
+                  duration: 300,
+                  useNativeDriver: true,
+              }).start(() => {
+                  // This callback ensures that the state updates happen after the animation.
+                  // It might be necessary to adjust this logic based on your animation flow.
+              });
+          });
+      }
+  
+      // Clear the selected indices after the check, preparing for the next selection
+      setSelectedIds([]);
+  };
+  
     const startGame = () => {
         setCards(generateCards());
         setCanSelect(true);
@@ -60,7 +91,7 @@ const GamePage = () => {
 
     const resetGame = () => {
         setCards(generateCards());
-        setCanSelect(false);
+        setCanSelect(false); // Disable selection until game starts again
         setSelectedIds([]);
         setScore(0);
         setTimer(0);

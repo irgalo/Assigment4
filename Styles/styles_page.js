@@ -95,10 +95,22 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 20,
+    position: 'absolute',
+    bottom: 20,
+  },
+  startButton: {
+    padding: 10,
+    backgroundColor: '#00C851',
+    borderRadius: 5,
+  },
   resetButton: {
     padding: 10,
-    backgroundColor: '#007bff',
+    backgroundColor: '#ff4444',
     borderRadius: 5,
-    marginTop: 50,
   },
 });

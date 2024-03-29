@@ -2,53 +2,67 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('game.db');
 
-// In your database.js or equivalent file
 const init = () => {
-  db.transaction(tx => {
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS high_scores (
-        id INTEGER PRIMARY KEY NOT NULL,
-        score INTEGER,
-        time INTEGER,
-        attempts INTEGER,
-        username TEXT,
-        pictureUri TEXT
-      );`,
-      [],
-      () => console.log('Table created successfully'),
-      (_, err) => console.log(err)
-    );
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS high_scores (
+          id INTEGER PRIMARY KEY NOT NULL,
+          score INTEGER,
+          time INTEGER,
+          attempts INTEGER,
+          username TEXT
+        );`,
+        [],
+        () => {
+          console.log('High scores table created successfully');
+          resolve();
+        },
+        (_, error) => {
+          console.log('Error creating high scores table:', error);
+          reject(error);
+        }
+      );
+    });
   });
 };
 
-// Adjust insertScore to include username and pictureUri
-const insertScore = (score, time, attempts, username, pictureUri, callback) => {
-  db.transaction(tx => {
-    tx.executeSql(
-      `INSERT INTO high_scores (score, time, attempts, username, pictureUri) VALUES (?, ?, ?, ?, ?);`,
-      [score, time, attempts, username, pictureUri],
-      (_, result) => callback(true, result),
-      (_, err) => {
-        console.log(err);
-        callback(false, err);
-      }
-    );
+const insertScore = (score, time, attempts, username) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `INSERT INTO high_scores (score, time, attempts, username) VALUES (?, ?, ?, ?);`,
+        [score, time, attempts, username],
+        (_, result) => {
+          console.log(`Score inserted successfully: ${score}, Time: ${time}, Attempts: ${attempts}, Username: ${username}`);
+          resolve(result);
+        },
+        (_, error) => {
+          console.log(`Error inserting score: ${error}. Data - Score: ${score}, Time: ${time}, Attempts: ${attempts}, Username: ${username}`);
+          reject(error);
+        }
+      );
+    });
   });
 };
 
-// Ensure fetchScores retrieves the new fields
-const fetchScores = callback => {
-  db.transaction(tx => {
-    tx.executeSql(
-      `SELECT * FROM high_scores ORDER BY score DESC, time ASC, attempts ASC;`,
-      [],
-      (_, result) => callback(result.rows._array),
-      (_, err) => console.log(err)
-    );
+const fetchScores = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM high_scores ORDER BY score DESC, time ASC, attempts ASC;`,
+        [],
+        (_, result) => {
+          resolve(result.rows._array);
+        },
+        (_, error) => {
+          console.log('Error fetching scores:', error);
+          reject(error);
+        }
+      );
+    });
   });
 };
-
-  
 
 export const database = {
   init,

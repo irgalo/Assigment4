@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Alert, Animated, Vibration, Button } from 'react-native';
 import { styles } from './Styles/styles_page';
 
-
 const cardColors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33'];
 
 const generateCards = () => {
@@ -12,7 +11,7 @@ const generateCards = () => {
     ]).sort(() => Math.random() - 0.5);
 };
 
-const GamePage = () => {
+const GamePage = ({ setCurrentPage }) => {
     const [cards, setCards] = useState(generateCards());
     const [selectedIds, setSelectedIds] = useState([]);
     const [canSelect, setCanSelect] = useState(true); // Changed to true for initial game state
@@ -22,90 +21,94 @@ const GamePage = () => {
     const [gameCompleted, setGameCompleted] = useState(false);
 
     useEffect(() => {
-      const timerInterval = setInterval(() => {
-          setTimer(prevTimer => prevTimer + 1);
-      }, 1000);
-      return () => clearInterval(timerInterval);
-  }, []);
+        const timerInterval = setInterval(() => {
+            setTimer(prevTimer => prevTimer + 1);
+        }, 1000);
+        return () => clearInterval(timerInterval);
+    }, []);
 
-  useEffect(() => {
-      if (gameCompleted) {
-          Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`, [
-            { text: "OK", onPress: () => setCurrentPage('HighScores') }
-          ]);
-      }
-  }, [gameCompleted]);
+    useEffect(() => {
+        if (gameCompleted) {
+            Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`, [
+                { text: "OK", onPress: () => setCurrentPage('HighScores') }
+            ]);
+        }
+    }, [gameCompleted]);
 
     const handleCardPress = async (index) => {
-      // Check if the card is already in the process of being flipped or matched
-      if (!canSelect || selectedIds.includes(index) || cards[index].flipAnim._value > 0 || gameCompleted) return;
-  
-      const newSelectedIds = [...selectedIds, index];
-      setSelectedIds(newSelectedIds); // Immediately update the selected indices
-  
-      // Prevent double tapping the same card by disabling it temporarily
-      Animated.timing(cards[index].flipAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-      }).start(({ finished }) => {
-          // Only proceed if the animation finished successfully
-          if (finished && newSelectedIds.length === 2) {
-              setCanSelect(false); // Temporarily prevent further selections
-              // Add a slight delay before checking for a match to allow the user to view the second card
-              setTimeout(() => {
-                  checkForMatch(newSelectedIds);
-                  setSelectedIds([]); // Clear the array of selected IDs for the next selection
-                  setCanSelect(true); // Allow selections again
-              }, 500); // Adjust timing as necessary for a better user experience
-          }
-      });
-  };
-  
-  const checkForMatch = (indices) => {
-    const [firstIndex, secondIndex] = indices;
-    const match = cards[firstIndex].color === cards[secondIndex].color;
-    if (match) {
-        // Handle a match
-        handleMatch(indices);
-    } else {
-        // Handle a mismatch
-        handleMismatch(indices);
-    }
-    // Check if all cards are matched after handling the current pair
-    const allMatched = cards.every(card => card.isMatched);
-    if (allMatched) {
-        // Set game as completed
-        setGameCompleted(true);
-        // Show alert and navigate to High Scores page upon acknowledgment
-        Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`,
-            [
-                { text: "OK", onPress: () => setCurrentPage('HighScores') } // Assuming setCurrentPage is a prop function for navigation
-            ]
-        );
-    }
-};
+        // Check if the card is already in the process of being flipped or matched
+        if (!canSelect || selectedIds.includes(index) || cards[index].flipAnim._value > 0 || gameCompleted) return;
 
-  // Handle the case where two cards match
-  const handleMatch = (indices) => {
-      setScore(prevScore => prevScore + 100);
-      let newCards = cards.map((card, idx) =>
-          indices.includes(idx) ? { ...card, isMatched: true } : card);
-      setCards(newCards);
+        const newSelectedIds = [...selectedIds, index];
+        setSelectedIds(newSelectedIds); // Immediately update the selected indices
+
+        // Prevent double tapping the same card by disabling it temporarily
+        Animated.timing(cards[index].flipAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+        }).start(({ finished }) => {
+            // Only proceed if the animation finished successfully
+            if (finished && newSelectedIds.length === 2) {
+                setCanSelect(false); // Temporarily prevent further selections
+                // Add a slight delay before checking for a match to allow the user to view the second card
+                setTimeout(() => {
+                    checkForMatch(newSelectedIds);
+                    setSelectedIds([]); // Clear the array of selected IDs for the next selection
+                    setCanSelect(true); // Allow selections again
+                }, 500); // Adjust timing as necessary for a better user experience
+            }
+        });
+    };
+
+    const checkForMatch = (indices) => {
+      const [firstIndex, secondIndex] = indices;
+      const match = cards[firstIndex].color === cards[secondIndex].color;
+      if (match) {
+          // Handle a match
+          handleMatch(indices);
+      } else {
+          // Handle a mismatch
+          handleMismatch(indices);
+      }
+      // Check if all cards are matched after handling the current pair
+      const allMatched = cards.every(card => card.isMatched);
+      if (allMatched) {
+          // Set game as completed
+          setGameCompleted(true);
+          // Reset the board
+          resetGame();
+          // Save game data to the database
+          saveGameData(score, attempts, timer);
+          // Show alert and navigate to High Scores page upon acknowledgment
+          Alert.alert('Congratulations!', `You've completed the game in ${attempts} attempts and ${timer} seconds.`,
+              [
+                  { text: "OK", onPress: () => setCurrentPage('HighScores') } // Assuming setCurrentPage is a prop function for navigation
+              ]
+          );
+      }
   };
-  
-  // Handle the case where two cards do not match
-  const handleMismatch = (indices) => {
-      Vibration.vibrate();
-      indices.forEach(idx => {
-          Animated.timing(cards[idx].flipAnim, {
-              toValue: 0,
-              duration: 300,
-              useNativeDriver: true,
-          }).start();
-      });
-  };
-  
+
+    // Handle the case where two cards match
+    const handleMatch = (indices) => {
+        setScore(prevScore => prevScore + 100);
+        let newCards = cards.map((card, idx) =>
+            indices.includes(idx) ? { ...card, isMatched: true } : card);
+        setCards(newCards);
+    };
+
+    // Handle the case where two cards do not match
+    const handleMismatch = (indices) => {
+        Vibration.vibrate();
+        indices.forEach(idx => {
+            Animated.timing(cards[idx].flipAnim, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        });
+    };
+
     const startGame = () => {
         setCards(generateCards());
         setCanSelect(true);
@@ -124,6 +127,10 @@ const GamePage = () => {
         setTimer(0);
         setAttempts(0);
         setGameCompleted(false);
+    };
+
+    const navigateToHome = () => {
+        setCurrentPage('Home');
     };
 
     return (
@@ -152,6 +159,12 @@ const GamePage = () => {
                     </Pressable>
                 ))}
             </View>
+            <Pressable onPress={navigateToHome}>
+                <Text style={styles.backButton}>Back to Home</Text>
+            </Pressable>
+            <Pressable onPress={navigateToHome}>
+                <Text style={styles.backButton}>Score</Text>
+            </Pressable>
         </View>
     );
 };

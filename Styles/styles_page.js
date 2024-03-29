@@ -133,4 +133,7 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+  backButtonContainer: {
+    marginTop: 20,
+},
 });

@@ -20,8 +20,8 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   card: {
-    width: cardWidth,
-    height: cardWidth,
+    width: 75, // Fixed size for debugging
+    height: 75, // Fixed size for debugging
     justifyContent: 'center',
     alignItems: 'center',
     margin: cardMargin,

@@ -231,5 +231,33 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  containerLandscape: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardGridLandscape: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardLandscape: {
+    width: 60, // Adjusts size for landscape
+    height: 60, // Adjusts size for landscape
+    margin: 5, // Adjusts margin for landscape
+  },
+  scoreContainerLandscape: {
+    position: 'absolute',
+    bottom: 20, // Adjusts position for landscape
+    right: 20, // Adjusts position for landscape
+  },
+  infoContainerLeftLandscape: {
+    position: 'absolute',
+    top: 20, // Adjusts position for landscape
+    left: 20, // Adjusts position for landscape
+    alignItems: 'flex-start',
+  },
 
 });

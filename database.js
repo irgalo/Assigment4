@@ -1,3 +1,10 @@
+/**
+ * Author: Irah Loreto
+ * Purpose - Manages data interactions for the app, such as storing high scores. creates the tables for the scores.
+ * Error - There are alot of console logs i had to alot of debugging. The databse is not properly collecting the username and displaying it. I had to omit due to time constraints.
+ * database.js
+ */
+
 import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('game.db');

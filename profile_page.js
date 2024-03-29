@@ -1,3 +1,10 @@
+/**
+ * Author: Irah Loreto
+ * Purpose - Allows users to create and edit their profile, including setting a username and choosing a profile picture.
+ * Errors - Unfortuanly this page did not work with the database well on displaying the user name and profile name in other pages. I had to omit that feature
+ * profile_page.js
+ */
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, Alert, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';

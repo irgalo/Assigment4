@@ -1,3 +1,10 @@
+/**
+ * Author: Irah Loreto
+ * Purpose - Displays the high scores from all players. It showcases rankings, allowing users to see their performance.
+ * Errors - Unfortuanly I There is an error displaying the username. I have no clue to fix that. But the other scores should display
+ * highScore_page.js
+ */
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { database } from './database'; // Adjust path as needed

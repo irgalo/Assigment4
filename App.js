@@ -7,7 +7,7 @@ import { styles } from './Styles/styles_page';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('Home');
-
+  
   useEffect(() => {
     // Initializes the database when the app starts
     database.init();

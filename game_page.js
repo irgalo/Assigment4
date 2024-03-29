@@ -162,8 +162,11 @@ const GamePage = ({ setCurrentPage }) => {
             <Pressable onPress={navigateToHome}>
                 <Text style={styles.backButton}>Back to Home</Text>
             </Pressable>
-            <Pressable onPress={navigateToHome}>
-                <Text style={styles.backButton}>Score</Text>
+            <Pressable
+              style={styles.homepageButton}
+              onPress={() => setCurrentPage('HighScores')}
+            >
+              <Text style={styles.homepageButtonText}>High Scores</Text>
             </Pressable>
         </View>
     );

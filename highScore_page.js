@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { database } from './database'; // Make sure this path is correct
 import { styles } from './Styles/styles_page';
 
@@ -13,18 +12,22 @@ const HighScorePage = ({ setCurrentPage }) => {
 
   return (
     <View style={styles.HighScorecontainer}>
-    <View style={styles.scoreText}>
-      <Text>High Scores</Text>
+      <Text style={styles.scoreText}>High Scores</Text>
       {highScores.map((score, index) => (
-        <Text key={index}>
-          Score: {score.score}, Time: {score.time}, Attempts: {score.attempts}
-        </Text>
-      
+        <View key={index} style={styles.highScoreEntry}>
+          {score.pictureUri ? (
+            <Image source={{ uri: score.pictureUri }} style={styles.profilePic} />
+          ) : (
+            <View style={styles.placeholderPic}></View> // Placeholder in case of no picture
+          )}
+          <Text>
+            {score.username}: Score: {score.score}, Time: {score.time}, Attempts: {score.attempts}
+          </Text>
+        </View>
       ))}
-     <Pressable onPress={() => setCurrentPage('Home')} style={styles.ScoreHomeBackButton}>
+      <Pressable onPress={() => setCurrentPage('Home')} style={styles.ScoreHomeBackButton}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </Pressable>
-    </View>
     </View>
   );
 };

@@ -176,4 +176,60 @@ export const styles = StyleSheet.create({
     marginHorizontal: 10, 
     top:300,
   },
+  profileContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+  },
+  profileInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    width: '80%',
+    padding: 10,
+  },
+  profilePic: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 20,
+  },
+  profileButton: {
+    backgroundColor: '#3498db',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  profileButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  profilePictureButton: {
+    backgroundColor: '#9b59b6',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  profileSaveButton: {
+    backgroundColor: '#2ecc71',
+    padding: 10,
+    borderRadius: 5,
+  },
+  profileBackButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    backgroundColor: '#e74c3c',
+    padding: 10,
+    borderRadius: 5,
+  },
+  profileBackButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+
 });

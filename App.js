@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import GamePage from './game_page';
 import HighScorePage from './highScore_page';
+import ProfilePage from './profile_page'; // Make sure the path is correct
 import { database } from './database';
 import { styles } from './Styles/styles_page';
 
@@ -31,6 +32,13 @@ const App = () => {
             >
               <Text style={styles.homepageButtonText}>High Scores</Text>
             </Pressable>
+            {/* Added navigation button to the Profile page */}
+            <Pressable
+              style={styles.homepageButton}
+              onPress={() => setCurrentPage('Profile')}
+            >
+              <Text style={styles.homepageButtonText}>Profile</Text>
+            </Pressable>
           </View>
         </View>
       )}
@@ -39,6 +47,10 @@ const App = () => {
       )}
       {currentPage === 'HighScores' && (
         <HighScorePage setCurrentPage={setCurrentPage} />
+      )}
+      {/* Render the ProfilePage component when currentPage is 'Profile' */}
+      {currentPage === 'Profile' && (
+        <ProfilePage setCurrentPage={setCurrentPage} />
       )}
     </View>
   );

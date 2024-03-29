@@ -14,25 +14,27 @@ const init = () => {
 };
 
 const insertScore = (score, time, attempts, callback) => {
-  db.transaction((tx) => {
-    tx.executeSql(
-      'high_scores (score, time, attempts) VALUES (?, ?, ?);',
-      [score, time, attempts],
-      (_, result) => { callback(true, result); },
-      (_, err) => { console.log(err); callback(false, err); }
-    );
-  });
-};
-
-const fetchScores = (callback) => {
-  db.transaction((tx) => {
-    tx.executeSql(
-      [],
-      (_, result) => { callback(result.rows._array); },
-      (_, err) => { console.log(err); }
-    );
-  });
-};
+    db.transaction((tx) => {
+      tx.executeSql(
+        'INSERT INTO high_scores (score, time, attempts) VALUES (?, ?, ?);',
+        [score, time, attempts],
+        (_, result) => { callback(true, result); },
+        (_, err) => { console.log(err); callback(false, err); }
+      );
+    });
+  };
+  
+  const fetchScores = (callback) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM high_scores ORDER BY score DESC, time ASC, attempts ASC;', // Adjust ordering as per your requirement
+        [],
+        (_, result) => { callback(result.rows._array); },
+        (_, err) => { console.log(err); }
+      );
+    });
+  };
+  
 
 export const database = {
   init,

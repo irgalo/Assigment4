@@ -44,9 +44,10 @@ const GamePage = ({ setCurrentPage }) => {
 
   const handleCardPress = (index) => {
     if (!canSelect || selectedIds.includes(index) || cards[index].flipAnim._value > 0) return;
-
+  
     const newSelectedIds = [...selectedIds, index];
     setSelectedIds(newSelectedIds);
+    setAttempts(prevAttempts => prevAttempts + 1); // Increment attempts
     Animated.timing(cards[index].flipAnim, {
       toValue: 1,
       duration: 300,
@@ -59,6 +60,7 @@ const GamePage = ({ setCurrentPage }) => {
       }
     });
   };
+  
 
   const checkForMatch = (indices) => {
     const [firstIndex, secondIndex] = indices;
@@ -155,15 +157,17 @@ const GamePage = ({ setCurrentPage }) => {
           </Pressable>
         ))}
       </View>
+      <View style={styles.gamePage_buttonContainer}>
       <Pressable onPress={() => setCurrentPage('Home')} style={styles.backButton}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </Pressable>
       <Pressable
-        style={styles.homepageButton}
+        style={styles.Homepage2Button}
         onPress={() => setCurrentPage('HighScores')}
       >
-        <Text style={styles.homepageButtonText}>High Scores</Text>
+        <Text style={styles.backButtonText}>High Scores</Text>
       </Pressable>
+      </View>
     </View>
   );
 };

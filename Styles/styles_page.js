@@ -135,5 +135,45 @@ export const styles = StyleSheet.create({
   },
   backButtonContainer: {
     marginTop: 20,
-},
+  },
+  gamePage_buttonContainer: {
+    flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '150%',
+      paddingHorizontal: 120,
+      position: 'absolute',
+      top: 240, // Adjust the position from the bottom
+  },
+  backButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#3498db', 
+    borderRadius: 5,
+    marginHorizontal: 10, 
+  },
+  Homepage2Button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#3498db', 
+    borderRadius: 5,
+    marginHorizontal: 10, 
+  },
+  HighScorecontainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scoreText: {
+    fontSize: 28,
+    marginBottom: 40,
+    alignItems: 'center',
+  },
+  ScoreHomeBackButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#3498db', 
+    borderRadius: 5,
+    marginHorizontal: 10, 
+    top:300,
+  },
 });

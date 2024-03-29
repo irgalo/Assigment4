@@ -1,36 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
 import GamePage from './game_page';
 import HighScorePage from './highScore_page';
 import ProfilePage from './profile_page';
-import { database } from './database';
 import { styles } from './Styles/styles_page';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('Home');
-  
-  const [username, setUsername] = useState('User123');
-  const [profilePicUri, setProfilePicUri] = useState('https://example.com/profile-pic.jpg');
-
-  useEffect(() => {
-    database.init();
-  }, []);
-
-  // Corrected renderHeader function
-  const renderHeader = () => {
-    if (currentPage === 'Game' || currentPage === 'Home') {
-      return (
-        <View style={styles.profileHeaderContainer}>
-          <Text style={styles.profileHeaderText}>{username}</Text>
-          <Image source={{ uri: profilePicUri }} style={styles.profileHeaderImage} />
-        </View>
-      );
-    }
-  };
 
   return (
     <View style={styles.container}>
-      {renderHeader()}
       {currentPage === 'Home' && (
         <View style={styles.homeContainer}>
           <Text style={styles.homeTitle}>Welcome to the Memory Game</Text>

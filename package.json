@@ -24,7 +24,8 @@
     "react-native-screens": "~3.22.0",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
-    "use-sound": "^4.0.1"
+    "use-sound": "^4.0.1",
+    "expo-media-library": "~15.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

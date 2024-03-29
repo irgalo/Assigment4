@@ -16,12 +16,6 @@ const HighScorePage = ({ setCurrentPage }) => {
       <Text style={styles.scoreText}>High Scores</Text>
       {highScores.map((score, index) => (
         <View key={index} style={{ alignItems: 'center' }}>
-          {score.pictureUri && (
-            <Image
-              source={{ uri: score.pictureUri }}
-              style={{ width: 50, height: 50, borderRadius: 25 }}
-            />
-          )}
           <Text>Username: {score.username}</Text>
           <Text>Score: {score.score}, Time: {score.time}, Attempts: {score.attempts}</Text>
         </View>

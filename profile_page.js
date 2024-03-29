@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, Alert, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as MediaLibrary from 'expo-media-library'; // Import MediaLibrary from Expo
 import { styles } from './Styles/styles_page'; // Ensure you have the appropriate path
 
 const ProfilePage = ({ setCurrentPage }) => {
@@ -35,10 +36,13 @@ const ProfilePage = ({ setCurrentPage }) => {
   };
 
   const saveProfile = async () => {
-    // Save username and profilePicUri to AsyncStorage
-    await AsyncStorage.setItem('username', username);
+    // Save the image to the device's gallery
+    await MediaLibrary.saveToLibraryAsync(profilePicUri);
+    Alert.alert('Image saved to gallery!');
+    
+    // Save profilePicUri to AsyncStorage
     await AsyncStorage.setItem('profilePicUri', profilePicUri);
-    Alert.alert('Profile Saved', 'Your profile has been updated successfully.');
+    Alert.alert('Profile Picture Saved', 'Your profile picture has been updated successfully.');
   };
 
   return (
